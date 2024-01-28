@@ -2,7 +2,7 @@
     import SingleFilm from './SingleFilm.vue';
     import SingleTrendFilm from './SingleTrenFilm.vue';
     import MenuGenre from './MenuGenere.vue';
-    import { store } from '../store';
+    import { store } from '../store.js';
     import Axios from 'axios';
 
 
@@ -21,14 +21,14 @@
         },
         methods:{
            getMenu(){
-                Axios.get('https://api.themoviedb.org/3/genre/movie/list?api_key=0c109132d12a812dd280ce879c2b7239')
+                Axios.get('https://api.themoviedb.org/3/genre/movie/list?api_key=b1f3b68aff2290b9c0157abb080d6c9f')
                 .then((res) => {
                     for(let i = 0; i < res.data.genres.length; i ++){
                         this.store.MenuList.push(res.data.genres[i].name)
                     }
                 });
 
-                Axios.get('https://api.themoviedb.org/3/genre/tv/list?api_key=8b1143c0f645e9868946688f9cb05dfe')
+                Axios.get('https://api.themoviedb.org/3/genre/tv/list?api_key=b1f3b68aff2290b9c0157abb080d6c9f')
                 .then((response) => {
                     for(let i = 0; i < response.data.genres.length; i ++){
                         if(!this.store.MenuList.includes(response.data.genres[i].name)){

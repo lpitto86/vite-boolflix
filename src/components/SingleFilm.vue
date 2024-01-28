@@ -1,6 +1,6 @@
 <script>
     import Axios from 'axios';
-    import { store } from '../store.js';
+    import { store } from '../store';
 
     export default {
         data() {
@@ -41,7 +41,7 @@
             },
             getCredit(elementId){        
                 
-                Axios.get('https://api.themoviedb.org/3/'+ this.media +'/'+ elementId +'/credits?api_key=0c109132d12a812dd280ce879c2b7239')
+                Axios.get('https://api.themoviedb.org/3/'+ this.media +'/'+ elementId +'/credits?api_key=b1f3b68aff2290b9c0157abb080d6c9f')
                 .then((res)=> {
                     for(let i = 0; i < 4; i++){
 
@@ -49,7 +49,7 @@
                     }
                 });
 
-                Axios.get('https://api.themoviedb.org/3/'+ this.media +'/'+ elementId +'?api_key=0c109132d12a812dd280ce879c2b7239')
+                Axios.get('https://api.themoviedb.org/3/'+ this.media +'/'+ elementId +'?api_key=b1f3b68aff2290b9c0157abb080d6c9f')
                 .then((res)=>{
                     
                     this.genre = res.data.genres
