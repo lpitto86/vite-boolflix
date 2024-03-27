@@ -1,41 +1,96 @@
 <script>
-    import { store } from '../store';
+import axios from 'axios';
+import { store } from '../store.js';
+export default {
+    data() {
+        return {
+            store
+        };
+    },
+    methods: {
+        getDataFromAPi(){
+            this.store.movies = []
+            this.store.series = []
 
-    export default {
-        data() {
-            return { 
-                store
-            }
-        },
+            let queryString = this.store.searchName;
+
+            let finalUrlStringMovie = this.store.baseUrlMovies + queryString;
+            let finalUrlStringSerie = this.store.baseUrlSeries + queryString;
+
+            
+            axios.get(finalUrlStringMovie)
+            .then((response)=>{
+                this.store.movies = response.data.results;
+                console.log('Array film',this.store.movies);
+            });
+            
+            axios.get(finalUrlStringSerie)
+            .then((response)=>{
+                this.store.series = response.data.results;
+                console.log('Array serie',this.store.series);
+            });
+            
+            this.store.searchName = '';
+        }
+
     }
-    </script>
+}
+</script>
 
 <template>
-   <div class="row p-4 justify-content-between g-0">
-        <div class="text-white d-flex justify-content-center align-items-center logo-frame">
-            <img src="../assets/img/boolflix-logo.svg" alt="Boolflix_logo">
-        </div>
+    <header class=" w-100 bg-black py-4 position-fixed z-1 my-border-bottom">
+        <div class="container-fluid px-4">
+            <div class="row justify-content-between align-items-center">
 
-        <form class="col-2 d-flex justify-content-center align-items-center" @submit.prevent="$emit('userSearch')">
-            <div class=" w-75">
-                <input
-                v-model="store.searchInput"
-                type="text"
-                class="form-control"
-                placeholder="Search character"
-                aria-label="Search character">
+                <div class="logo-container">
+                    <h2 class="my-netflix-logo">Boolflix</h2>
+                    <!-- <img class="w-100" src="../../public/LogoNetflix.png" alt="Logo Netflix"> -->
+                </div>
+
+                <div class="col-auto">
+                    <form @submit.prevent="getDataFromAPi()" class="d-flex">
+                        <div class="me-3">
+                            <input v-model="this.store.searchName" type="text" class="my-input form-control" placeholder="Cerca un film o una serie...">
+                        </div>
+                        <div>
+                            <button class="btn my-search-button text-white">Cerca</button>
+                        </div>
+
+                    </form>
+
+                </div>
+
             </div>
-            
-            
-            <button type="submit" class="btn btn-primary">
-                Cerca
-            </button>
-            
-            
-        </form>
-   </div>
+
+        </div>
+    
+    </header>
 </template>
 
 <style lang="scss" scoped>
-    @import '../assets/scss/header.scss';
+@use '../assets/scss/partials/variables.scss' as *;
+
+    .my-border-bottom{
+        border-bottom: 1px solid rgb(31, 31, 31);
+    
+    }
+    .logo-container{
+        width: 150px;
+
+        .my-netflix-logo{
+            color: $netflix_color;
+            text-transform: uppercase;
+            font-family: 'bebas neue';
+            margin: 0;
+            font-size: 2.5em;
+        }
+    }
+
+    .my-input{
+        width: 400px;
+    }
+    .my-search-button{
+        background-color: $netflix_color;
+    }
+
 </style>

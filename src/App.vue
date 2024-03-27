@@ -1,93 +1,44 @@
 <script>
-import { store } from './store';
 import AppHeader from './components/AppHeader.vue';
 import AppMain from './components/AppMain.vue';
-import Axios from 'axios';
-
+import AppFooter from './components/AppFooter.vue';
+import axios from 'axios';
+import { store } from './store.js';
 
 export default {
     data() {
-        return { 
-            
-            store,
-        }
+        return {
+            store
+
+        };
     },
     components: {
-
         AppHeader,
         AppMain,
-        
-    },
+        AppFooter
+    },  
     methods: {
 
-        getResponse(){
-            if(this.store.searchInput.length <= 0){
-                this.store.flag = false;
-            }else{
-
-                this.store.flag = true;
-            }
-
-            Axios.get(this.store.baseUrlSearchMovie, {
-                params: {
-                    query: this.store.searchInput.length > 0 ? this.store.searchInput : null,
-                }
-            })
-            .then((res)=> {
-
-                this.store.filmsList = [];
-                
-                for(let i = 0; i < res.data.results.length; i++){
-                    this.store.filmsList.push(res.data.results[i])
-                };
-
-            });
-
-            Axios.get(this.store.baseUrlSearchTvSearies, {
-                params: {
-                    query: this.store.searchInput.length > 0 ? this.store.searchInput : null,
-                }
-            })
-            .then((response)=> {
-
-                this.store.TvList = [];
-
-                for(let j = 0; j < response.data.results.length; j++){
-                    this.store.TvList.push(response.data.results[j])
-                };
-
-            });
-            
-        },
     },
     created(){
-        Axios.get(this.store.baseUrlCreate)
-        .then((res)=>{
-            for(let i = 0; i < 4; i++){
-                this.store.trendList.push(res.data.results[i])
-            };
-        })
-    },
+        axios.get(this.store.baseUrlMovies)
+        .then((response)=>{
+            this.store.movies = response.data.results;
+            console.log(this.store.movies);
+        });
+    }
 }
 </script>
 
 <template>
 
-    <header>
-        <AppHeader @userSearch="getResponse()"/>
-    </header>
+    <AppHeader />
 
-    <main>
-        <AppMain/>
-    </main>
-    
+    <AppMain />
+
 </template>
 
 <style lang="scss">
-    @use "../src/assets/scss/partials/variables" as *;
-    @import "bootstrap/scss/bootstrap";
-
-    body{
-        background-color: $baseColor;
-    }
+@use "assets/scss/partials/reset" as *;
+@use "assets/scss/main" as *;
 </style>

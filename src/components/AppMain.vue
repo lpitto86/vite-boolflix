@@ -1,124 +1,67 @@
 <script>
-    import SingleFilm from './SingleFilm.vue';
-    import SingleTrendFilm from './SingleTrenFilm.vue';
-    import MenuGenre from './MenuGenere.vue';
-    import { store } from '../store.js';
-    import Axios from 'axios';
+import axios from 'axios';
+import { store } from '../store.js';
+import SingleProduct from './SingleProduct.vue';
 
+export default {
+    data() {
+        return {
+            store
+        };
+    },
+    methods: {
 
-    export default {
-        data() {
-            return { 
-                store,
-                menuFlag: false,
-            }
-        },
-        components: {
+    },
+    components:{
+        SingleProduct,
+    },
+    mounted(){
+        axios.get(this.store.trendUrlMovies)
+            .then((response)=>{
+                this.store.movies = response.data.results;
+                console.log('Array film',this.store.movies);
 
-            SingleFilm,
-            SingleTrendFilm,
-            MenuGenre
-        },
-        methods:{
-           getMenu(){
-                Axios.get('https://api.themoviedb.org/3/genre/movie/list?api_key=b1f3b68aff2290b9c0157abb080d6c9f')
-                .then((res) => {
-                    for(let i = 0; i < res.data.genres.length; i ++){
-                        this.store.MenuList.push(res.data.genres[i].name)
-                    }
-                });
+            });
 
-                Axios.get('https://api.themoviedb.org/3/genre/tv/list?api_key=b1f3b68aff2290b9c0157abb080d6c9f')
-                .then((response) => {
-                    for(let i = 0; i < response.data.genres.length; i ++){
-                        if(!this.store.MenuList.includes(response.data.genres[i].name)){
-                            this.store.MenuList.push(response.data.genres[i].name)
-                        }
-                    }
-                });
-                console.log(this.store.MenuList)
-           },
+        axios.get(this.store.trendUrlSeries)
+            .then((response)=>{
+                this.store.series = response.data.results;
+                console.log('Array serie',this.store.series);
+            });
 
-           filterGenre(filmGenre){
-            const genreIndex = this.store.genreActive.indexOf(filmGenre);
-
-            if (genreIndex !== -1) {
-                
-                this.store.genreActive.splice(genreIndex, 1);
-            } else {
-                
-                this.store.genreActive.push(filmGenre);
-            }
-           },
-
-           switchFlag(){
-            this.menuFlag = !this.menuFlag
-           }
-        },
-
-        mounted(){
-            this.getMenu()
-        },
-    }
-    </script>
+    },
+}
+</script>
 
 <template>
-    <div class="container-xxl pt-5 position-relative">
-        
-        <div class="row">
-                <div class="col-12 text-white d-flex justify-content-end position-relative">
-                    <button @click="switchFlag()">Filter</button>
-                    <ul class="menu-genre" v-if="menuFlag == true">
-                        <MenuGenre v-for="(elem, i) in this.store.MenuList"
-                        @click="filterGenre(elem)"
-                        :nomeGenere="elem"/>
-                    </ul>
+    <main class="bg-black">
+        <div class="container-fluid px-4">
+            <div class="text-white">
+                <h2 class="fw-bold py-4">Movies</h2>
+                <hr>
+                <div class="row justify-content-center">
+                    <SingleProduct v-for="(elem, i) in this.store.movies" :key="i" :singleProduct="elem" :name="elem.title"  :originalName="elem.original_title" :type="'movie'"/>
                 </div>
-        </div>
-
-        <div v-if="this.store.flag == false" class="row justify-content-center flex-wrap">
-
-            <div class="col-12 text-white">
-                <h2 class="m-0">I più visti di oggi</h2>
             </div>
-            
-
-            <SingleTrendFilm v-for="(elem, i) in this.store.trendList"
-            :key="i"
-            :SingleObject="elem"
-            :imageBackground="'https://image.tmdb.org/t/p/w780'+elem.poster_path"
-            />
-        </div>
-
-        <div v-else class="row justify-content-center  flex-wrap">
-
-            <div class="col-12 text-white">
-                <h2 class="m-0">Film</h2>
+    
+    
+            <div class="text-white">
+                <h2 class="fw-bold pt-5 pb-4">Tv Series</h2>
+                <hr>
+                <div class="row justify-content-center ">
+                    <SingleProduct v-for="(elem, j) in this.store.series" :key="j" :singleProduct="elem" :name="elem.name"  :originalName="elem.original_name" :type="'tv'"/>
+                </div>
             </div>
-            <SingleFilm v-for="(elem, i) in this.store.filmsList"
-            :key="i"
-            :FilmObj="elem"
-            :imageBackground="'https://image.tmdb.org/t/p/w780'+elem.poster_path"
-            :MediaName="elem.title"
-            :OriginalMediaName="elem.original_title"
-            :media="'movie'"
-            />
-
-            <div class="col-12 text-white my-3">
-                <h2 class="m-0">Tv Series</h2>
-            </div>
-            <SingleFilm v-for="(elem, i) in this.store.TvList"
-            :key="i"
-            :FilmObj="elem"
-            :imageBackground="'https://image.tmdb.org/t/p/w780'+elem.poster_path"
-            :MediaName="elem.name"
-            :OriginalMediaName="elem.original_name"
-            :media="'tv'"/>
         </div>
-    </div>
+    </main>
     
 </template>
 
 <style lang="scss" scoped>
-    @import '../assets/scss/main.scss';
+    main{
+        padding-top: 100px;
+    }
+    hr{
+        border: 1px solid rgb(112, 112, 112);
+    }
 </style>
